@@ -40,7 +40,7 @@ export const onegraphAuth =
       })
     : new AuthDummy();
 
-async function sendRequest({onegraphAuth, requestBody}) {
+export async function sendRequest({onegraphAuth, requestBody}) {
   const response = await fetch(
     'https://serve.onegraph.com/graphql?app_id=' + config.appId,
     {
@@ -112,8 +112,8 @@ function createFetchQuery(opts: ?Opts) {
 
       // eslint-disable-next-line no-unused-expressions
       opts?.notificationContext?.clearCorsViolation();
-
       if (json.errors && Object.keys(onegraphAuth.authHeaders()).length) {
+        console.log('errors in query', json.errors);
         // Clear auth on any error and try again
         onegraphAuth.destroy();
         const newJson = await sendRequest({
@@ -196,10 +196,7 @@ export function createEnvironment(opts?: ?Opts) {
 
 let globalEnvironment;
 
-export function initEnvironment(
-  initialRecords: ?RecordMap,
-  opts?: ?Opts,
-) {
+export function initEnvironment(initialRecords: ?RecordMap, opts?: ?Opts) {
   const environment = globalEnvironment ?? createEnvironment(opts);
   if (
     initialRecords &&
@@ -216,10 +213,7 @@ export function initEnvironment(
   return environment;
 }
 
-export function useEnvironment(
-  initialRecords: ?RecordMap,
-  opts?: ?Opts,
-) {
+export function useEnvironment(initialRecords: ?RecordMap, opts?: ?Opts) {
   const store = React.useRef(initEnvironment(initialRecords, opts));
   return store.current;
 }
